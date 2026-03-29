@@ -82,62 +82,16 @@ window.addEventListener('scroll', () => {
     ? 'rgba(201,150,43,0.45)' : 'rgba(201,150,43,0.22)';
 }, { passive: true });
 
-// Mobile nav toggle + active section link (scroll spy)
-(function initHeaderNav() {
-  const header = document.getElementById('site-header');
-  const nav = document.getElementById('main-nav');
-  const toggle = document.getElementById('nav-toggle');
-  if (!header || !nav || !toggle) return;
-
-  const mqMobile = window.matchMedia('(max-width: 820px)');
-
-  function syncHeaderHeight() {
+// Fixed header height for layout (no hamburger — nav is always in the bar)
+(function syncHeaderBarHeight() {
+  function sync() {
     const inner = document.querySelector('.header-inner');
     if (inner) {
       document.documentElement.style.setProperty('--header-h', `${inner.offsetHeight}px`);
     }
   }
-
-  function closeNav() {
-    nav.classList.remove('open');
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Menü öffnen');
-    syncHeaderHeight();
-  }
-
-  function openNav() {
-    syncHeaderHeight();
-    nav.classList.add('open');
-    toggle.setAttribute('aria-expanded', 'true');
-    toggle.setAttribute('aria-label', 'Menü schließen');
-  }
-
-  syncHeaderHeight();
-  window.addEventListener('resize', () => {
-    syncHeaderHeight();
-    if (!mqMobile.matches) closeNav();
-  });
-
-  toggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (nav.classList.contains('open')) closeNav();
-    else openNav();
-  });
-
-  nav.querySelectorAll('a[href^="#"]').forEach((a) => {
-    a.addEventListener('click', () => {
-      if (mqMobile.matches) closeNav();
-    });
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!nav.classList.contains('open')) return;
-    if (!header.contains(e.target)) closeNav();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && nav.classList.contains('open')) closeNav();
-  });
+  sync();
+  window.addEventListener('resize', sync, { passive: true });
 })();
 
 (function initNavActiveLink() {
